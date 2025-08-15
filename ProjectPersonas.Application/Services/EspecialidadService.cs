@@ -24,7 +24,7 @@ namespace ProjectPersonas.Application.Services
         {
             return await _especialidadRepository.GetByIdAsync(id);
         }
-        public async Task AddEspecialidadAsync(CreateEspecialidadDto especialidad)
+        public async Task<EspecialidadDto> AddEspecialidadAsync(CreateEspecialidadDto especialidad)
         {
             if (especialidad == null)
             {
@@ -35,6 +35,7 @@ namespace ProjectPersonas.Application.Services
                 Descripcion = especialidad.Descripcion,
             };
             await _especialidadRepository.AddAsync(newEspecialidad);
+            return new EspecialidadDto(newEspecialidad.Id, newEspecialidad.Descripcion);
         }
         public async Task UpdateEspecialidadAsync(int id, UpdateEspecialidadDto especialidad)
         {

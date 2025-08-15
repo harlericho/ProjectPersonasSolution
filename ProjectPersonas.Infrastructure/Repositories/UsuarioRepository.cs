@@ -23,7 +23,7 @@ namespace ProjectPersonas.Infrastructure.Repositories
             {
                 throw new ArgumentException("Username cannot be empty.", nameof(username));
             }
-           return await _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
+           return await _context.Usuario.FirstOrDefaultAsync(u => u.Username == username);
         }
     }
 }

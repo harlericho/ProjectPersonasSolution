@@ -13,9 +13,9 @@ namespace ProjectPersonas.Infrastructure.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-        public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Especialidad> Especialidades { get; set; }
-        public DbSet<Persona> Personas { get; set; }
+        public DbSet<Usuario> Usuario { get; set; }
+        public DbSet<Especialidad> Especialidad { get; set; }
+        public DbSet<Persona> Persona { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

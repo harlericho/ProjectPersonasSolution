@@ -1,4 +1,5 @@
 ﻿using ProjectPersonas.Application.DTOs;
+using ProjectPersonas.Domain.Entities;
 using ProjectPersonas.Domain.Repositories;
 using ProjectPersonas.Domain.Security;
 using System;
@@ -31,7 +32,7 @@ namespace ProjectPersonas.Application.Services
                 throw new InvalidOperationException("Username already exists.");
             }
             _passwordHasher.CreateHash(registerDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            var usuario = new Domain.Entities.Usuario
+            var usuario = new Usuario
             {
                 Username = registerDto.Username,
                 PasswordHash = passwordHash,
@@ -48,7 +49,7 @@ namespace ProjectPersonas.Application.Services
                 throw new ArgumentException("Username and password cannot be empty.");
             }
             var usuario = await _usuarioRepository.GetByUsernameAsync(loginDto.Username);
-            if (usuario == null || !usuario.Activo.HasValue || !usuario.Activo.Value)
+            if (usuario == null)
             {
                 throw new InvalidOperationException("Invalid username or account is inactive.");
             }
