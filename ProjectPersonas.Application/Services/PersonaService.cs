@@ -22,9 +22,49 @@ namespace ProjectPersonas.Application.Services
         {
             return await _personaRepository.GetAllAsync();
         }
+        public async Task<IEnumerable<Persona>> GetAllPersonasEspecialidadAsync()
+        {
+            var personas = await _personaRepository.GetAllWithEspecialidadAsync();
+            return personas.Select(p => new Persona
+            {
+                Id = p.Id,
+                Cedula = p.Cedula,
+                Nombres = p.Nombres,
+                Direccion = p.Direccion,
+                Telefono = p.Telefono,
+                EspecialidadId = p.EspecialidadId,
+                Especialidad = p.Especialidad != null ? new Especialidad
+                {
+                    Id = p.Especialidad.Id,
+                    Descripcion = p.Especialidad.Descripcion
+                } : null
+            }).ToList();
+        }
         public async Task<Persona> GetPersonaByIdAsync(int id)
         {
             return await _personaRepository.GetByIdAsync(id);
+        }
+        public async Task<Persona> GetPersonaByIdWithEspecialidadAsync(int id)
+        {
+            var persona = await _personaRepository.GetByIdWithEspecialidadAsync(id);
+            if (persona == null)
+            {
+                throw new KeyNotFoundException($"Persona with ID {id} not found.");
+            }
+            return new Persona
+            {
+                Id = persona.Id,
+                Cedula = persona.Cedula,
+                Nombres = persona.Nombres,
+                Direccion = persona.Direccion,
+                Telefono = persona.Telefono,
+                EspecialidadId = persona.EspecialidadId,
+                Especialidad = persona.Especialidad != null ? new Especialidad
+                {
+                    Id = persona.Especialidad.Id,
+                    Descripcion = persona.Especialidad.Descripcion
+                } : null
+            };
         }
         public async Task AddPersonaAsync(CreatePersonaDto persona)
         {
@@ -43,7 +83,7 @@ namespace ProjectPersonas.Application.Services
                 Nombres = persona.Nombres,
                 Direccion = persona.Direccion,
                 Telefono = persona.Telefono,
-                Id_Especialidad = persona.EspecialidadId,
+                EspecialidadId = persona.EspecialidadId,
             };
             await _personaRepository.AddAsync(newPersona);
         }
@@ -66,7 +106,7 @@ namespace ProjectPersonas.Application.Services
             existingPersona.Nombres = persona.Nombres;
             existingPersona.Direccion = persona.Direccion;
             existingPersona.Telefono = persona.Telefono;
-            existingPersona.Id_Especialidad = persona.EspecialidadId;
+            existingPersona.EspecialidadId = persona.EspecialidadId;
             await _personaRepository.UpdateAsync(existingPersona);
         }
         public async Task DeletePersonaAsync(int id)

@@ -1,4 +1,4 @@
-using ProjectPersonas.Infrastructure.Data;
+﻿using ProjectPersonas.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using ProjectPersonas.Domain.Repositories;
 using ProjectPersonas.Infrastructure.Repositories;
@@ -19,9 +19,11 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 // Repositorios
 builder.Services.AddScoped<IEspecialidadRepository, EspecialidadRepository>();
+builder.Services.AddScoped<IPersonaRepository, PersonaRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 // Servicios
 builder.Services.AddScoped<EspecialidadService>();
+builder.Services.AddScoped<PersonaService>();
 builder.Services.AddScoped<AuthService>();
 
 // Seguridad
@@ -47,6 +49,71 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
+        //  Aquí agregamos el mensaje personalizado
+        //options.Events = new JwtBearerEvents
+        //{
+        //    OnChallenge = context =>
+        //    {
+        //        // Evita que se ejecute la respuesta predeterminada (401 vacía)
+        //        context.HandleResponse();
+
+        //        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        //        context.Response.ContentType = "application/json";
+
+        //        var result = System.Text.Json.JsonSerializer.Serialize(new
+        //        {
+        //            success = false,
+        //            message = "El token es requerido o inválido"
+        //        });
+
+        //        return context.Response.WriteAsync(result);
+        //    }
+        //};
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                // Evita la respuesta predeterminada 401
+                context.HandleResponse();
+
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+
+                    var result = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        success = false,
+                        message = "El token es requerido o inválido"
+                    });
+
+                    return context.Response.WriteAsync(result);
+                }
+
+                return Task.CompletedTask;
+            },
+            OnAuthenticationFailed = context =>
+            {
+                if (context.Exception is SecurityTokenExpiredException)
+                {
+                    if (!context.Response.HasStarted)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+
+                        var result = System.Text.Json.JsonSerializer.Serialize(new
+                        {
+                            success = false,
+                            message = "El token ha expirado"
+                        });
+
+                        return context.Response.WriteAsync(result);
+                    }
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -67,6 +134,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -13,7 +13,7 @@ namespace ProjectPersonas.Domain.Entities
         public string? Nombres { get; set; }
         public string? Direccion { get; set; }
         public string? Telefono { get; set; }
-        public int Id_Especialidad { get; set; }
-        public Especialidad? Especialidad { get; set; }
+        public int EspecialidadId { get; set; }
+        public Especialidad? Especialidad { get; set; }  
     }
 }

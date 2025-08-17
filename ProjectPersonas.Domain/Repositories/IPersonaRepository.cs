@@ -9,5 +9,8 @@ namespace ProjectPersonas.Domain.Repositories
 {
     public interface IPersonaRepository :IRepository<Persona>
     {
+        // Metodo especifico para traer personas con su especialidad
+        Task<IEnumerable<Persona>> GetAllWithEspecialidadAsync();
+        Task<Persona?> GetByIdWithEspecialidadAsync(int id);
     }
 }

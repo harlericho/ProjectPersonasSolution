@@ -72,7 +72,7 @@ namespace ProjectPersonas.WebApplicationAPI.Controllers
             try
             {
                 await _especialidadService.UpdateEspecialidadAsync(id, especialidadDto);
-                return NoContent();
+                return Ok(new { message = $"Especialidad with ID {id} updated successfully." });
             }
             catch (KeyNotFoundException knfEx)
             {
@@ -89,7 +89,7 @@ namespace ProjectPersonas.WebApplicationAPI.Controllers
             try
             {
                 await _especialidadService.DeleteEspecialidadAsync(id);
-                return NoContent();
+                return Ok(new { message = $"Especialidad with ID {id} deleted successfully." });
             }
             catch (KeyNotFoundException knfEx)
             {

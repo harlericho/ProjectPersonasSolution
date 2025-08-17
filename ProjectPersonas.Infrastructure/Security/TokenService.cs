@@ -34,7 +34,8 @@ namespace ProjectPersonas.Infrastructure.Security
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(clains),
-                Expires = DateTime.UtcNow.AddHours(1),
+                //Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"])),
                 Issuer = issuer,
                 Audience = audience,
                 SigningCredentials = credentials
